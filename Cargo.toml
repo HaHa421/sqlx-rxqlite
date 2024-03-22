@@ -5,7 +5,7 @@ description = "rqlite driver implementation for SQLx. intended for use with sqlx
 homepage = "https://github.com/HaHa421/sqlx-rqlite"
 version = "0.1.6"
 edition = "2021"
-license = "Apache-2.0"
+license = "MIT OR Apache-2.0"
 authors = [ "ha421 <hha835773@gmail.com>" ]
 keywords = ["sqlx", "rqlite"]
 categories = ["database"]
@@ -49,7 +49,7 @@ serde = { version = "1.0.145", features = ["derive"], optional = true }
 regex = { version = "1.5.5", optional = true }
 urlencoding = "2.1.3"
 
-rxqlite = { version = "0.1.3" }
+rxqlite = { version = "0.1.4" }
 
 [dependencies.sqlx-core]
 version = "0.7"
