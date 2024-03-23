@@ -48,3 +48,8 @@ pub type RXQLitePool = crate::pool::Pool<RXQLite>;
 
 /// An alias for [`PoolOptions`][crate::pool::PoolOptions], specialized for SQLite.
 pub type RXQLitePoolOptions = crate::pool::PoolOptions<RXQLite>;
+
+
+#[cfg(test)]
+mod tests;
+
