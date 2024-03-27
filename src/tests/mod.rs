@@ -1,5 +1,5 @@
 use super::*;
-use tokio::runtime::Runtime;
 use rxqlite::tests::*;
+use tokio::runtime::Runtime;
 
 mod queries;

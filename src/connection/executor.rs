@@ -87,57 +87,53 @@ impl<'c> Executor<'c> for &'c mut RXQLiteConnection {
         //let persistent = query.persistent() && arguments.is_some();
 
         //let args = Vec::with_capacity(arguments.len());
-        
-          Box::pin( async {
-          let row = self.inner.fetch_optional(sql, match arguments {
-            Some(arguments)=>arguments.values,
-            _=>vec![],
-          }).await;
-          match row {
-            Ok(row)=> {
-              //println!("{}:({})",file!(),line!());
 
-              //pin_mut!(cursor);
-              
-              if let Some(row) = row {
-                let size = row.inner.len();
-                let mut values = Vec::with_capacity(size);
-                let mut columns = Vec::with_capacity(size);
-                //let mut column_names = Vec::with_capacity(size);
-                  for (i,value) in row.inner.into_iter().enumerate() {
-                    values.push(RXQLiteValue::new(value,RXQLiteTypeInfo(DataType::Null)));
-                    columns.push(RXQLiteColumn{
-                      name : UStr::from(""),
-                      ordinal: i,
-                      type_info: RXQLiteTypeInfo(DataType::Null),
-                    });
-                  }
-                  let row=RXQLiteRow {
-                    values: values.into_boxed_slice(),
-                    columns: columns.into(),
-                    column_names : Default::default(),
-                  };
-                  Ok(Some(row))
-              } else {
-                Ok(None)
-              }
-              
+        Box::pin(async {
+            let row = self
+                .inner
+                .fetch_optional(
+                    sql,
+                    match arguments {
+                        Some(arguments) => arguments.values,
+                        _ => vec![],
+                    },
+                )
+                .await;
+            match row {
+                Ok(row) => {
+                    //println!("{}:({})",file!(),line!());
+
+                    //pin_mut!(cursor);
+
+                    if let Some(row) = row {
+                        let size = row.inner.len();
+                        let mut values = Vec::with_capacity(size);
+                        let mut columns = Vec::with_capacity(size);
+                        //let mut column_names = Vec::with_capacity(size);
+                        for (i, value) in row.inner.into_iter().enumerate() {
+                            values.push(RXQLiteValue::new(value, RXQLiteTypeInfo(DataType::Null)));
+                            columns.push(RXQLiteColumn {
+                                name: UStr::from(""),
+                                ordinal: i,
+                                type_info: RXQLiteTypeInfo(DataType::Null),
+                            });
+                        }
+                        let row = RXQLiteRow {
+                            values: values.into_boxed_slice(),
+                            columns: columns.into(),
+                            column_names: Default::default(),
+                        };
+                        Ok(Some(row))
+                    } else {
+                        Ok(None)
+                    }
+                }
+                Err(err) => Err(RXQLiteError { inner: err }.into()),
             }
-            Err(err)=> {
-              Err(RXQLiteError{
-                inner: err,
-              }.into())
-            }
-          }
-          
-          })
-        
+        })
     }
-    
-    fn fetch_one<'e, 'q: 'e, E: 'q>(
-        self,
-        mut query: E,
-    ) -> BoxFuture<'e, Result<RXQLiteRow, Error>>
+
+    fn fetch_one<'e, 'q: 'e, E: 'q>(self, mut query: E) -> BoxFuture<'e, Result<RXQLiteRow, Error>>
     where
         'c: 'e,
         E: Execute<'q, Self::Database>,
@@ -148,41 +144,43 @@ impl<'c> Executor<'c> for &'c mut RXQLiteConnection {
 
         //let args = Vec::with_capacity(arguments.len());
 
-          Box::pin( async {
-          let row = self.inner.fetch_one(sql, match arguments {
-            Some(arguments)=>arguments.values,
-            _=>vec![],
-          }).await;
-          match row {
-            Ok(row)=> {
-              let size = row.inner.len();
-              let mut values = Vec::with_capacity(size);
-              let mut columns = Vec::with_capacity(size);
-              //let mut column_names = Vec::with_capacity(size);
-              for (i,value) in row.inner.into_iter().enumerate() {
-                values.push(RXQLiteValue::new(value,RXQLiteTypeInfo(DataType::Null)));
-                columns.push(RXQLiteColumn{
-                  name : UStr::from(""),
-                  ordinal: i,
-                  type_info: RXQLiteTypeInfo(DataType::Null),
-                });
-              }
-              let row=RXQLiteRow {
-                values: values.into_boxed_slice(),
-                columns: columns.into(),
-                column_names : Default::default(),
-              };
-              Ok(row)
+        Box::pin(async {
+            let row = self
+                .inner
+                .fetch_one(
+                    sql,
+                    match arguments {
+                        Some(arguments) => arguments.values,
+                        _ => vec![],
+                    },
+                )
+                .await;
+            match row {
+                Ok(row) => {
+                    let size = row.inner.len();
+                    let mut values = Vec::with_capacity(size);
+                    let mut columns = Vec::with_capacity(size);
+                    //let mut column_names = Vec::with_capacity(size);
+                    for (i, value) in row.inner.into_iter().enumerate() {
+                        values.push(RXQLiteValue::new(value, RXQLiteTypeInfo(DataType::Null)));
+                        columns.push(RXQLiteColumn {
+                            name: UStr::from(""),
+                            ordinal: i,
+                            type_info: RXQLiteTypeInfo(DataType::Null),
+                        });
+                    }
+                    let row = RXQLiteRow {
+                        values: values.into_boxed_slice(),
+                        columns: columns.into(),
+                        column_names: Default::default(),
+                    };
+                    Ok(row)
+                }
+                Err(err) => Err(RXQLiteError { inner: err }.into()),
             }
-            Err(err)=> {
-              Err(RXQLiteError{
-                inner: err,
-              }.into())
-            }
-          }
-          })
+        })
     }
-    
+
     fn prepare_with<'e, 'q: 'e>(
         self,
         _sql: &'q str,

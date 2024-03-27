@@ -1,4 +1,3 @@
-
 use crate::connection::RXQLiteConnection;
 use crate::options::RXQLiteConnectOptions;
 
@@ -51,23 +50,31 @@ impl ConnectOptions for RXQLiteConnectOptions {
         */
         for (key, value) in url.query_pairs().into_iter() {
             match &*key {
-              "ssl"=> {
-                if value == "yes" || value == "1" {
-                  if options.tls_config.is_none() {
-                    options.tls_config=Some(Default::default());
-                  }
-                  options.tls_config.as_mut().unwrap().accept_invalid_certificates = false;
+                "ssl" => {
+                    if value == "yes" || value == "1" {
+                        if options.tls_config.is_none() {
+                            options.tls_config = Some(Default::default());
+                        }
+                        options
+                            .tls_config
+                            .as_mut()
+                            .unwrap()
+                            .accept_invalid_certificates = false;
+                    }
                 }
-              }
-              "ssl-insecure"=> {
-                if value == "yes" || value == "1" {
-                  if options.tls_config.is_none() {
-                    options.tls_config=Some(Default::default());
-                  }
-                  options.tls_config.as_mut().unwrap().accept_invalid_certificates = true;
+                "ssl-insecure" => {
+                    if value == "yes" || value == "1" {
+                        if options.tls_config.is_none() {
+                            options.tls_config = Some(Default::default());
+                        }
+                        options
+                            .tls_config
+                            .as_mut()
+                            .unwrap()
+                            .accept_invalid_certificates = true;
+                    }
                 }
-              }
-              _=>{}
+                _ => {}
             }
         }
         Ok(Self { inner: options })

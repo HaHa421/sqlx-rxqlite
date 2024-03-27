@@ -1,4 +1,3 @@
-
 use crate::encode::{Encode, IsNull};
 //use crate::types::Type;
 //use crate::type_info::DataType;

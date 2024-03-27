@@ -8,9 +8,9 @@ use sqlx_rxqlite::RXQLitePoolOptions;
 // or #[actix_web::main]
 async fn main() -> Result<(), sqlx::Error> {
     let host = if std::env::args().len() > 1 {
-      std::env::args().nth(1).unwrap().to_string()
+        std::env::args().nth(1).unwrap().to_string()
     } else {
-      "localhost".into()
+        "localhost".into()
     };
     // Create a connection pool
     //  for MySQL/MariaDB, use MySqlPoolOptions::new()
@@ -18,7 +18,7 @@ async fn main() -> Result<(), sqlx::Error> {
     //  etc.
     let pool = RXQLitePoolOptions::new()
         //.max_connections(5)
-        .connect(&format!("rxqlite://{}:21001",host))
+        .connect(&format!("rxqlite://{}:21001", host))
         .await?;
     println!("connected");
 
@@ -33,7 +33,8 @@ async fn main() -> Result<(), sqlx::Error> {
     .await?;
 
     // Make a simple query to return the given parameter (use a question mark `?` instead of `$1` for MySQL/MariaDB)
-    let mut rows = sqlx::query("SELECT id,name,birth_date FROM _sqlx_rxqlite_test_user_and_date_").fetch(&pool);
+    let mut rows = sqlx::query("SELECT id,name,birth_date FROM _sqlx_rxqlite_test_user_and_date_")
+        .fetch(&pool);
     println!("fetched rows");
     while let Some(row) = rows.next().await {
         println!("got row");
@@ -51,11 +52,13 @@ async fn main() -> Result<(), sqlx::Error> {
         .await?;
 
     if row.is_none() {
-        sqlx::query("INSERT INTO _sqlx_rxqlite_test_user_and_date_ (name,birth_date) VALUES (?, ?);")
-            .bind("ha2")
-            .bind(Utc::now())
-            .execute(&pool)
-            .await?;
+        sqlx::query(
+            "INSERT INTO _sqlx_rxqlite_test_user_and_date_ (name,birth_date) VALUES (?, ?);",
+        )
+        .bind("ha2")
+        .bind(Utc::now())
+        .execute(&pool)
+        .await?;
         row = sqlx::query("SELECT * FROM _sqlx_rxqlite_test_user_and_date_ WHERE name = 'ha2'")
             .fetch_optional(&pool)
             .await?;
@@ -74,11 +77,11 @@ async fn main() -> Result<(), sqlx::Error> {
         .bind("ha2")
         .execute(&pool)
         .await?;
-    
+
     sqlx::query("DROP TABLE _sqlx_rxqlite_test_user_and_date_")
         .execute(&pool)
         .await?;
-        
+
     println!("finishing");
 
     Ok(())

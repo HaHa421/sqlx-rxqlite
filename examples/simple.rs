@@ -7,9 +7,9 @@ use sqlx_rxqlite::RXQLitePoolOptions;
 // or #[actix_web::main]
 async fn main() -> Result<(), sqlx::Error> {
     let host = if std::env::args().len() > 1 {
-      std::env::args().nth(1).unwrap().to_string()
+        std::env::args().nth(1).unwrap().to_string()
     } else {
-      "localhost".into()
+        "localhost".into()
     };
     // Create a connection pool
     //  for MySQL/MariaDB, use MySqlPoolOptions::new()
@@ -17,13 +17,13 @@ async fn main() -> Result<(), sqlx::Error> {
     //  etc.
     let pool = RXQLitePoolOptions::new()
         //.max_connections(5)
-        .connect(&format!("rxqlite://{}:21001",host))
+        .connect(&format!("rxqlite://{}:21001", host))
         .await?;
     println!("connected");
     sqlx::query("DROP TABLE IF EXISTS _sqlx_rxqlite_test_user_")
         .execute(&pool)
         .await?;
-        
+
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS _sqlx_rxqlite_test_user_ (
         id INTEGER PRIMARY KEY,
@@ -62,9 +62,9 @@ async fn main() -> Result<(), sqlx::Error> {
             .await?;
          */
         row = sqlx::query("SELECT * FROM _sqlx_rxqlite_test_user_ WHERE name = ?")
-        .bind("ha2")
-        .fetch_optional(&pool)
-        .await?;
+            .bind("ha2")
+            .fetch_optional(&pool)
+            .await?;
     }
 
     let row = row.expect("insertion failed");
@@ -79,11 +79,11 @@ async fn main() -> Result<(), sqlx::Error> {
         .bind("ha2")
         .execute(&pool)
         .await?;
-    
+
     sqlx::query("DROP TABLE _sqlx_rxqlite_test_user_")
         .execute(&pool)
         .await?;
-        
+
     println!("finishing");
 
     Ok(())

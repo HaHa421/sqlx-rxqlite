@@ -1,4 +1,3 @@
-
 use crate::RXQLiteConnectOptions;
 use sqlx_core::Url;
 
@@ -20,11 +19,17 @@ impl RXQLiteConnectOptions {
         }
         */
         if self.inner.tls_config.is_some() {
-          if self.inner.tls_config.as_ref().unwrap().accept_invalid_certificates {
-            url.query_pairs_mut().append_pair("ssl-insecure", "yes");
-          } else {
-            url.query_pairs_mut().append_pair("ssl", "yes");
-          }
+            if self
+                .inner
+                .tls_config
+                .as_ref()
+                .unwrap()
+                .accept_invalid_certificates
+            {
+                url.query_pairs_mut().append_pair("ssl-insecure", "yes");
+            } else {
+                url.query_pairs_mut().append_pair("ssl", "yes");
+            }
         }
         url
     }

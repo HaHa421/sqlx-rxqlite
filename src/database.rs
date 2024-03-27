@@ -1,4 +1,3 @@
-
 pub(crate) use sqlx_core::database::{
     Database, HasArguments, HasStatement, HasStatementCache, HasValueRef,
 };
