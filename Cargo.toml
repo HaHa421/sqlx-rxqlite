@@ -49,11 +49,10 @@ serde = { version = "1.0.145", features = ["derive"], optional = true }
 regex = { version = "1.5.5", optional = true }
 urlencoding = "2.1.3"
 
-#rxqlite = { path = "../.." , version = "0.1.12-dev" }
 [dependencies.rxqlite]
 version = "0.1"
 package = "rxqlite-client"
-path = "../rxqlite-client"
+#path = "../rxqlite-client"
 
 [dependencies.sqlx-core]
 version = "0.7"
@@ -73,4 +72,4 @@ rxqlite-tests-common = { version = "0.1.7" } #path = "../rxqlite/crates/rxqlite-
 rxqlite-common = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-common" }
 rxqlite-lite-common = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-lite-common" }
 rxqlite-notification = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-notification" }
-rxqlite = { path = "../rxqlite-client" , features = [ "test-dependency" ] , package = "rxqlite-client" } # , version = "0.1" }
+rxqlite = {  version = "0.1" , features = [ "test-dependency" ] , package = "rxqlite-client" } #path = "../rxqlite-client" , 
