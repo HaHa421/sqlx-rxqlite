@@ -38,7 +38,9 @@
   <a href="https://crates.io/crates/sqlx-rxqlite">
     <img src="https://img.shields.io/crates/v/sqlx-rxqlite.svg?style=flat-square"
     alt="Crates.io version" /></a>
-  [![CI](https://github.com/HaHa421/sqlx-rxqlite/actions/workflows/ci.yaml/badge.svg?branch=byc)](https://github.com/HaHa421/sqlx-rxqlite/actions/workflows/ci.yaml)
+  
+  [![CI](https://github.com/HaHa421/sqlx-rxqlite/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/HaHa421/sqlx-rxqlite/actions/workflows/ci.yaml)
+ 
 </div>
 
 ## Install
