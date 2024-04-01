@@ -34,7 +34,7 @@ use query_result::RXQLiteQueryResult;
 pub mod transaction;
 use transaction::RXQLiteTransactionManager;
 pub mod database;
-use database::RXQLite;
+pub use database::RXQLite;
 
 pub mod value;
 use value::*;
@@ -45,6 +45,8 @@ impl_column_index_for_row!(RXQLiteRow);
 impl_column_index_for_statement!(RXQLiteStatement);
 
 pub type RXQLitePool = crate::pool::Pool<RXQLite>;
+
+impl_encode_for_option!(RXQLite);
 
 /// An alias for [`PoolOptions`][crate::pool::PoolOptions], specialized for SQLite.
 pub type RXQLitePoolOptions = crate::pool::PoolOptions<RXQLite>;

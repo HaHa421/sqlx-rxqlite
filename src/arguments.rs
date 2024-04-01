@@ -32,6 +32,7 @@ impl RXQLiteArguments {
         let ty = T::type_info();
 
         if let IsNull::Yes = value.encode_by_ref(&mut self.values) {
+          self.values.push(rxqlite::Value::Null);
         } else {
         }
         self.types.push(ty);
