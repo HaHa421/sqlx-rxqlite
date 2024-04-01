@@ -14,7 +14,7 @@ mod establish;
 mod executor;
 
 pub struct RXQLiteConnection {
-    inner: rxqlite::Connection,
+  pub inner: rxqlite::Connection,
 }
 
 impl Debug for RXQLiteConnection {

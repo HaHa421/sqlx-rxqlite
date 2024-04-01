@@ -1,0 +1,102 @@
+name: CI
+
+on: [push]
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  build:
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        os: [windows-latest,ubuntu-latest] 
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set target triple (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: echo "TARGET_TRIPLE=x86_64-unknown-linux-gnu" >> $GITHUB_ENV
+    - name: Set target triple (Windows)
+      if: matrix.os == 'windows-latest'
+      run: echo "TARGET_TRIPLE=x86_64-pc-windows-msvc" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    
+    - name: Set archive name (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: echo "RXQLITED_ARCHIVE=rxqlited-ubuntu.zip" >> $GITHUB_ENV
+    - name: Set archive name (Windows)
+      if: matrix.os == 'windows-latest'
+      run: echo "RXQLITED_ARCHIVE=rxqlited-win32.zip" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append    
+      
+    - name: Download rxqlite binaries(Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        wget https://github.com/HaHa421/rxqlite/releases/latest/download/${{ env.RXQLITED_ARCHIVE }}
+    
+    - name: Download rxqlite binaries(Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        curl -L -O https://github.com/HaHa421/rxqlite/releases/latest/download/${{ env.RXQLITED_ARCHIVE }}
+      
+    - name: Create rxqlited destination directories
+      run: |
+        mkdir -p ${{ github.workspace }}/target/${{ env.TARGET_TRIPLE }}/release
+      
+    - name: Extract and move binaries
+      run: |
+        unzip ${{ env.RXQLITED_ARCHIVE }} -d ${{ github.workspace }}/target/${{ env.TARGET_TRIPLE }}/release
+        
+    
+    - name: Verify rxqlited exists(Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        if [ ! -f ${{ github.workspace }}/target/${{ env.TARGET_TRIPLE }}/release/rxqlited ]; then
+          echo "Error: rxqlited not found"
+          exit 1
+        fi
+    - name: Verify rxqlited exists(Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        if (!(Test-Path ${{ github.workspace }}/target/${{ env.TARGET_TRIPLE }}/release/rxqlited.exe)) { exit 1 }
+        
+    - uses: ilammy/msvc-dev-cmd@v1
+    
+    
+    
+     
+    - name: Install dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get update && sudo apt-get install -y build-essential
+    
+    - name: Install NASM(Windows)
+      if: matrix.os == 'windows-latest'
+      run: choco install nasm -y
+      
+    - name: Update local toolchain
+      run: |
+        rustup update
+          
+    - name: Display Rust Version
+      run:  |
+        cargo -vV
+        rustc -vV
+    
+    - name: Test(Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: cargo test --release --target ${{ env.TARGET_TRIPLE }} -- --nocapture
+      env:
+        CARGO_TERM_COLOR: always
+        TMPDIR: ${{ runner.temp }}
+        RXQLITED_DIR: ${{ github.workspace }}/target/${{ env.TARGET_TRIPLE }}/release
+    - name: Test(Windows)
+      if: matrix.os == 'windows-latest'
+      run: cargo test --release --target ${{ env.TARGET_TRIPLE }} -- --nocapture
+      env:
+        CARGO_TERM_COLOR: always
+        TEMP: ${{ runner.temp }}
+        RXQLITED_DIR: ${{ github.workspace }}/target/${{ env.TARGET_TRIPLE }}/release

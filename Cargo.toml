@@ -3,7 +3,7 @@ name = "sqlx-rxqlite"
 #documentation = "https://docs.rs/sqlx"
 description = "rqlite driver implementation for SQLx. intended for use with sqlx; see the `sqlx` crate for details."
 homepage = "https://github.com/HaHa421/sqlx-rqlite"
-version = "0.1.10"
+version = "0.1.11"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = [ "ha421 <hha835773@gmail.com>" ]
@@ -49,7 +49,11 @@ serde = { version = "1.0.145", features = ["derive"], optional = true }
 regex = { version = "1.5.5", optional = true }
 urlencoding = "2.1.3"
 
-rxqlite = { version = "0.1.11" }
+#rxqlite = { path = "../.." , version = "0.1.12-dev" }
+[dependencies.rxqlite]
+version = "0.1"
+package = "rxqlite-client"
+path = "../rxqlite-client"
 
 [dependencies.sqlx-core]
 version = "0.7"
@@ -62,7 +66,11 @@ name = "simple_chrono"
 required-features = [ "chrono" ]
 
 [dev-dependencies]
-sqlx = {  version = "0.7" , default-features = false, features = ["macros", "runtime-tokio", "tls-none"] }
+anyhow = "1"
+sqlx = {  version = "0.7" , default-features = false, features = ["macros", "runtime-tokio", "tls-none" , "chrono" ] }
 tokio = { version = "1", features = [ "full" ] }
-rxqlite-tests-common = { version = "0.1.7", path = "../rxqlite-tests-common" }
-rxqlite = { version = "0.1.11" , features = [ "test-dependency" ]}
+rxqlite-tests-common = { version = "0.1.7" } #path = "../rxqlite/crates/rxqlite-tests-common" }
+rxqlite-common = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-common" }
+rxqlite-lite-common = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-lite-common" }
+rxqlite-notification = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-notification" }
+rxqlite = { path = "../rxqlite-client" , features = [ "test-dependency" ] , package = "rxqlite-client" } # , version = "0.1" }

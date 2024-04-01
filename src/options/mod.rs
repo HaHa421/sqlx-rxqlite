@@ -1,6 +1,6 @@
 use rxqlite::RSQliteClientTlsConfig;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone , Default)]
 pub struct RXQLiteConnectOptions {
     pub(crate) inner: rxqlite::ConnectOptions,
 }
