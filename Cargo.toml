@@ -1,8 +1,8 @@
 [package]
 name = "sqlx-rxqlite"
-#documentation = "https://docs.rs/sqlx"
+#documentation = "https://docs.rs/sqlx-rxqlite"
 description = "rqlite driver implementation for SQLx. intended for use with sqlx; see the `sqlx` crate for details."
-homepage = "https://github.com/HaHa421/sqlx-rqlite"
+homepage = "https://github.com/HaHa421/sqlx-rxqlite"
 version = "0.1.12"
 edition = "2021"
 license = "MIT OR Apache-2.0"
