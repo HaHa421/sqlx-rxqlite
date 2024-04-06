@@ -15,12 +15,12 @@ pub(crate) use sqlx_core::error::*;
 
 #[derive(Debug)]
 pub struct RXQLiteError {
-    pub inner: rxqlite::RXQLiteError,
+    pub inner: rxqlite_lite_common::RXQLiteError,
 }
 
 impl RXQLiteError {
     /*
-    pub(crate) fn new(inner: Box<rxqlite::RXQLiteError>) -> Self {
+    pub(crate) fn new(inner: Box<rxqlite_lite_common::RXQLiteError>) -> Self {
         Self {
             inner,
         }

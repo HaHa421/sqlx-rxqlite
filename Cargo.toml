@@ -3,7 +3,7 @@ name = "sqlx-rxqlite"
 #documentation = "https://docs.rs/sqlx-rxqlite"
 description = "rqlite driver implementation for SQLx. intended for use with sqlx; see the `sqlx` crate for details."
 homepage = "https://github.com/HaHa421/sqlx-rxqlite"
-version = "0.1.15"
+version = "0.1.16"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = [ "ha421 <hha835773@gmail.com>" ]
@@ -49,10 +49,17 @@ serde = { version = "1.0.145", features = ["derive"], optional = true }
 regex = { version = "1.5.5", optional = true }
 urlencoding = "2.1.3"
 
-[dependencies.rxqlite]
+[dependencies.rxqlite-client]
 version = "0.1"
-package = "rxqlite-client"
 #path = "../rxqlite-client"
+
+[dependencies.rxqlite-common]
+version = "0.1"
+#path = "../rxqlite/crates/rxqlite-common"
+
+[dependencies.rxqlite-lite-common]
+version = "0.1"
+#path = "../rxqlite/crates/rxqlite-lite-common"
 
 [dependencies.sqlx-core]
 version = "0.7.4"
@@ -68,8 +75,24 @@ required-features = [ "chrono" ]
 anyhow = "1"
 sqlx = {  version = "0.7.4" , default-features = false, features = ["macros", "runtime-tokio", "tls-none" , "chrono" ] }
 tokio = { version = "1", features = [ "full" ] }
-rxqlite-tests-common = { version = "0.1.7" } #path = "../rxqlite/crates/rxqlite-tests-common" }
-rxqlite-common = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-common" }
-rxqlite-lite-common = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-lite-common" }
-rxqlite-notification = { version = "0.1" } #, path = "../rxqlite/crates/rxqlite-notification" }
-rxqlite = {  version = "0.1" , features = [ "test-dependency" ] , package = "rxqlite-client" } #path = "../rxqlite-client" , 
+
+[dev-dependencies.rxqlite-tests-common]
+version = "0.1.7"
+#path = "../rxqlite/crates/rxqlite-tests-common"
+
+[dev-dependencies.rxqlite-common]
+version = "0.1"
+#path = "../rxqlite/crates/rxqlite-common"
+
+[dev-dependencies.rxqlite-lite-common]
+version = "0.1"
+#path = "../rxqlite/crates/rxqlite-lite-common"
+
+[dev-dependencies.rxqlite-notification]
+version = "0.1"
+#path = "../rxqlite/crates/rxqlite-notification"
+
+[dev-dependencies.rxqlite-client]
+version = "0.1" 
+features = [ "test-dependency" ]
+#path = "../rxqlite-client"

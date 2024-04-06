@@ -1,16 +1,16 @@
 use super::*;
+use rxqlite_client::RXQLiteClientBuilder;
 
 impl RXQLiteConnection {
     pub async fn establish(
         options: &RXQLiteConnectOptions,
     ) -> Result<Self, sqlx_core::error::Error> {
-        let res = options.inner.connect().await;
-        match res {
-            Ok(conn) => Ok(Self { inner: conn }),
-            Err(err) => Err(Error::Io(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                format!("{}", err).as_str(),
-            ))),
-        }
+        let builder = RXQLiteClientBuilder::new(
+          options.node_id,
+          format!("{}:{}",options.node_host,options.node_port),
+          )
+          .tls_config(options.tls_config.clone());
+
+        Ok(Self { inner: builder.build() })
     }
 }

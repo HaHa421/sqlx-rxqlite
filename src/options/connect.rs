@@ -14,13 +14,13 @@ impl ConnectOptions for RXQLiteConnectOptions {
     type Connection = RXQLiteConnection;
     // borrowed from sqlx-mysql
     fn from_url(url: &Url) -> Result<Self, Error> {
-        let mut options = rxqlite::ConnectOptions::default();
+        let mut options= RXQLiteConnectOptions::default();
         if let Some(host) = url.host_str() {
-            options.leader_host = host.into();
+            options.node_host = host.into();
         }
 
         if let Some(port) = url.port() {
-            options.leader_port = port;
+            options.node_port = port;
         }
         /*
         let username = url.username();
@@ -76,8 +76,9 @@ impl ConnectOptions for RXQLiteConnectOptions {
                 }
                 _ => {}
             }
+            
         }
-        Ok(Self { inner: options })
+        Ok(options)
     }
     fn to_url_lossy(&self) -> Url {
         self.build_url()

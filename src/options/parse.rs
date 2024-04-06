@@ -5,7 +5,7 @@ impl RXQLiteConnectOptions {
     pub(crate) fn build_url(&self) -> Url {
         let mut url = Url::parse(&format!(
             "rxqlite://{}:{}",
-            /*self.inner.username, */ self.inner.leader_host, self.inner.leader_port
+            /*self.inner.username, */ self.node_host, self.node_port
         ))
         .expect("BUG: generated un-parseable URL");
         /*
@@ -18,9 +18,8 @@ impl RXQLiteConnectOptions {
             let _ = url.set_password(Some(&password));
         }
         */
-        if self.inner.tls_config.is_some() {
+        if self.tls_config.is_some() {
             if self
-                .inner
                 .tls_config
                 .as_ref()
                 .unwrap()

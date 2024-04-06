@@ -6,7 +6,7 @@ use std::sync::Arc;
 //use rxqlite::types::FromJsonValue;
 use crate::RXQLite;
 //use rxqlite::types::FromJsonValueRef;
-use rxqlite::FromValueRef;
+use rxqlite_common::FromValueRef;
 
 use sqlx_core::type_info::TypeInfo;
 
@@ -87,7 +87,7 @@ impl<'r> ValueRef<'r> for RXQLiteValueRef<'r> {
 
 #[derive(Clone)]
 pub struct RXQLiteValue {
-    pub(crate) handle: Arc<rxqlite::Value>,
+    pub(crate) handle: Arc<rxqlite_common::Value>,
     pub(crate) type_info: RXQLiteTypeInfo,
 }
 
@@ -111,7 +111,7 @@ impl RXQLiteValue {
         }
     }
     */
-    pub(crate) fn new(value: rxqlite::Value, type_info: RXQLiteTypeInfo) -> Self {
+    pub(crate) fn new(value: rxqlite_common::Value, type_info: RXQLiteTypeInfo) -> Self {
         Self {
             type_info,
             handle: Arc::new(value),

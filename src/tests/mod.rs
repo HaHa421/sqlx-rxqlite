@@ -1,5 +1,5 @@
 use super::*;
-use rxqlite::tests::*;
+use rxqlite_client::tests::*;
 use tokio::runtime::Runtime;
 use rxqlite_tests_common::TestTlsConfig;
 use rxqlite_tests_common::TestClusterManager;
@@ -84,7 +84,7 @@ impl TestManagerWithPool {
                     connect_options = connect_options.use_insecure_ssl(tls_config.accept_invalid_certificates);
                     
                   }
-                  connect_options = connect_options.leader_id(*node_id);
+                  connect_options = connect_options.node_id(*node_id);
                   let mut split= instance.http_addr.split(":");
                   
                   connect_options = connect_options.host(split.next().unwrap());

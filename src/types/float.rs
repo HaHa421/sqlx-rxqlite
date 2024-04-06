@@ -12,8 +12,8 @@ impl Type<RXQLite> for f32 {
 }
 
 impl<'q> Encode<'q, RXQLite> for f32 {
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::from(*self));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::from(*self));
 
         IsNull::No
     }
@@ -32,8 +32,8 @@ impl Type<RXQLite> for f64 {
 }
 
 impl<'q> Encode<'q, RXQLite> for f64 {
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::from(*self));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::from(*self));
 
         IsNull::No
     }

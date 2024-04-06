@@ -16,8 +16,8 @@ impl Type<RXQLite> for i8 {
 }
 
 impl<'q> Encode<'q, RXQLite> for i8 {
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::Int((*self).into()));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::Int((*self).into()));
 
         IsNull::No
     }
@@ -40,8 +40,8 @@ impl Type<RXQLite> for i16 {
 }
 
 impl<'q> Encode<'q, RXQLite> for i16 {
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::Int((*self).into()));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::Int((*self).into()));
 
         IsNull::No
     }
@@ -64,8 +64,8 @@ impl Type<RXQLite> for i32 {
 }
 
 impl<'q> Encode<'q, RXQLite> for i32 {
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::Int((*self).into()));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::Int((*self).into()));
 
         IsNull::No
     }
@@ -88,8 +88,8 @@ impl Type<RXQLite> for i64 {
 }
 
 impl<'q> Encode<'q, RXQLite> for i64 {
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::Int((*self).into()));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::Int((*self).into()));
 
         IsNull::No
     }

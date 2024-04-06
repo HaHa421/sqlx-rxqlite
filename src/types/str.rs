@@ -13,8 +13,8 @@ impl Type<RXQLite> for str {
 }
 
 impl<'q> Encode<'q, RXQLite> for &'q str {
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::String(self.to_string()));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::String(self.to_string()));
 
         IsNull::No
     }
@@ -35,14 +35,14 @@ impl Type<RXQLite> for Box<str> {
 }
 
 impl Encode<'_, RXQLite> for Box<str> {
-    fn encode(self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::String(self.to_string()));
+    fn encode(self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::String(self.to_string()));
 
         IsNull::No
     }
 
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::String(self.to_string()));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::String(self.to_string()));
 
         IsNull::No
     }
@@ -61,14 +61,14 @@ impl Type<RXQLite> for String {
 }
 
 impl<'q> Encode<'q, RXQLite> for String {
-    fn encode(self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::String(self.to_string()));
+    fn encode(self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::String(self.to_string()));
 
         IsNull::No
     }
 
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::String(self.to_string()));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::String(self.to_string()));
 
         IsNull::No
     }
@@ -91,14 +91,14 @@ impl Type<RXQLite> for Cow<'_, str> {
 }
 
 impl<'q> Encode<'q, RXQLite> for Cow<'q, str> {
-    fn encode(self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::String(self.to_string()));
+    fn encode(self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::String(self.to_string()));
 
         IsNull::No
     }
 
-    fn encode_by_ref(&self, args: &mut Vec<rxqlite::Value>) -> IsNull {
-        args.push(rxqlite::Value::String(self.to_string()));
+    fn encode_by_ref(&self, args: &mut Vec<rxqlite_common::Value>) -> IsNull {
+        args.push(rxqlite_common::Value::String(self.to_string()));
 
         IsNull::No
     }

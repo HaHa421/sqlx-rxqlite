@@ -43,7 +43,7 @@ impl<'q> HasArguments<'q> for RXQLite {
 
     type Arguments = RXQLiteArguments;
 
-    type ArgumentBuffer = Vec<rxqlite::Value>;
+    type ArgumentBuffer = Vec<rxqlite_common::Value>;
 }
 
 impl<'q> HasStatement<'q> for RXQLite {

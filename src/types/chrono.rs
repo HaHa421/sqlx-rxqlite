@@ -61,25 +61,25 @@ impl<Tz: TimeZone> Encode<'_, RXQLite> for DateTime<Tz>
 where
     Tz::Offset: Display,
 {
-    fn encode_by_ref(&self, buf: &mut Vec<rxqlite::Value>) -> IsNull {
+    fn encode_by_ref(&self, buf: &mut Vec<rxqlite_common::Value>) -> IsNull {
         Encode::<RXQLite>::encode(self.to_rfc3339_opts(SecondsFormat::AutoSi, false), buf)
     }
 }
 
 impl Encode<'_, RXQLite> for NaiveDateTime {
-    fn encode_by_ref(&self, buf: &mut Vec<rxqlite::Value>) -> IsNull {
+    fn encode_by_ref(&self, buf: &mut Vec<rxqlite_common::Value>) -> IsNull {
         Encode::<RXQLite>::encode(self.format("%F %T%.f").to_string(), buf)
     }
 }
 
 impl Encode<'_, RXQLite> for NaiveDate {
-    fn encode_by_ref(&self, buf: &mut Vec<rxqlite::Value>) -> IsNull {
+    fn encode_by_ref(&self, buf: &mut Vec<rxqlite_common::Value>) -> IsNull {
         Encode::<RXQLite>::encode(self.format("%F").to_string(), buf)
     }
 }
 
 impl Encode<'_, RXQLite> for NaiveTime {
-    fn encode_by_ref(&self, buf: &mut Vec<rxqlite::Value>) -> IsNull {
+    fn encode_by_ref(&self, buf: &mut Vec<rxqlite_common::Value>) -> IsNull {
         Encode::<RXQLite>::encode(self.format("%T%.f").to_string(), buf)
     }
 }

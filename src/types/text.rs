@@ -20,7 +20,7 @@ impl<'q, T> Encode<'q, RXQLite> for Text<T>
 where
     T: Display,
 {
-    fn encode_by_ref(&self, buf: &mut Vec<rxqlite::Value>) -> IsNull {
+    fn encode_by_ref(&self, buf: &mut Vec<rxqlite_common::Value>) -> IsNull {
         Encode::<RXQLite>::encode(self.0.to_string(), buf)
     }
 }
