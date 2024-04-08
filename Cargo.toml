@@ -96,3 +96,6 @@ version = "0.1"
 version = "0.1" 
 features = [ "test-dependency" ]
 #path = "../rxqlite-client"
+
+[dev-dependencies.futures]
+version = "0.3.30"
