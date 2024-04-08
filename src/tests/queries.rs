@@ -3,6 +3,7 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::Row;
 
 use futures::future::join_all;
+use rand::Rng;
 
 #[test]
 fn simple_query() {
@@ -61,11 +62,12 @@ fn many_connections() {
         //const QUERY: &str ="SELECT name,birth_date from _test_user_ where name = ?";
         let /*mut*/ tm = TestManager::new("many_connections",3,None);
         tm.wait_for_cluster_established(1, 60).await.unwrap();
-        const CONNECTIONS_COUNT:usize=50;
+        const CONNECTIONS_COUNT:usize=100;
         let mut futs = vec![];
-        let http_addr = tm.instances.get(&1).unwrap().http_addr.clone();
+        let mut rng = rand::thread_rng();
         for i in 0..CONNECTIONS_COUNT {
-          let http_addr = http_addr.clone();
+          let node_id = rng.gen_range(1..tm.instances.len()+1);
+          let http_addr = tm.instances.get(&(node_id as u64)).unwrap().http_addr.clone();
           futs.push(async move{
             let pool = RXQLitePoolOptions::new()
                 //.max_connections(5)

@@ -75,6 +75,8 @@ required-features = [ "chrono" ]
 anyhow = "1"
 sqlx = {  version = "0.7.4" , default-features = false, features = ["macros", "runtime-tokio", "tls-none" , "chrono" ] }
 tokio = { version = "1", features = [ "full" ] }
+futures = "0.3.30"
+rand = "0.8.5"
 
 [dev-dependencies.rxqlite-tests-common]
 version = "0.1.7"
@@ -97,5 +99,3 @@ version = "0.1"
 features = [ "test-dependency" ]
 #path = "../rxqlite-client"
 
-[dev-dependencies.futures]
-version = "0.3.30"
