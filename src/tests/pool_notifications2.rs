@@ -20,7 +20,7 @@ fn do_notifications(test_name: &str,
         let notifications_addr = tm.instances.get(&1).unwrap().notifications_addr.clone();
         let pool = tm.pools.get_mut(&1).unwrap();
         let mut conn = pool.acquire().await.unwrap();
-        conn.inner
+        conn.inner.notification_stream_manager
             .start_listening_for_notifications(&notifications_addr)
             .await
             .unwrap();
@@ -47,7 +47,7 @@ fn do_notifications(test_name: &str,
 
         // now we check for notification, will do with this:
 
-        let notification_stream = conn.inner.notification_stream.as_mut().unwrap();
+        let notification_stream = conn.inner.notification_stream_manager.notification_stream.as_mut().unwrap();
         let message = notification_stream
             .read_timeout(NOTIFICATIONS_READ_TIMEOUT)
             .await
@@ -72,7 +72,7 @@ fn do_notifications(test_name: &str,
         .bind(&name)
         .execute(&*pool)
         .await.unwrap();
-        let notification_stream = conn.inner.notification_stream.as_mut().unwrap();
+        let notification_stream = conn.inner.notification_stream_manager.notification_stream.as_mut().unwrap();
         let message = notification_stream
             .read_timeout(NOTIFICATIONS_READ_TIMEOUT)
             .await
@@ -116,7 +116,7 @@ fn do_notifications2(test_name: &str,
           let notifications_addr = tm.instances.get(&1).unwrap().notifications_addr.clone();
           let pool = tm.pools.get_mut(&1).unwrap();
           let mut conn = pool.acquire().await.unwrap();
-          conn.inner
+          conn.inner.notification_stream_manager
               .start_listening_for_notifications(&notifications_addr)
               .await
               .unwrap();
@@ -143,7 +143,7 @@ fn do_notifications2(test_name: &str,
 
           // now we check for notification, will do with this:
 
-          let notification_stream = conn.inner.notification_stream.as_mut().unwrap();
+          let notification_stream = conn.inner.notification_stream_manager.notification_stream.as_mut().unwrap();
           let message = notification_stream
               .read_timeout(NOTIFICATIONS_READ_TIMEOUT)
               .await
@@ -168,7 +168,7 @@ fn do_notifications2(test_name: &str,
         .bind(&name)
         .execute(&*pool)
         .await.unwrap();
-          let notification_stream = conn.inner.notification_stream.as_mut().unwrap();
+          let notification_stream = conn.inner.notification_stream_manager.notification_stream.as_mut().unwrap();
           let message = notification_stream
               .read_timeout(NOTIFICATIONS_READ_TIMEOUT)
               .await
@@ -187,7 +187,7 @@ fn do_notifications2(test_name: &str,
                   assert_eq!(insert_row_id,row_id);
               }
           }
-          conn.inner
+          conn.inner.notification_stream_manager
               .stop_listening_for_notifications()
               .await
               .unwrap();
