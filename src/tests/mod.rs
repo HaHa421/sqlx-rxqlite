@@ -10,11 +10,7 @@ use rxqlite_lite_common::NodeId;
 use sqlx::Pool;
 use futures_util::future::join_all;
 
-#[cfg(target_os = "windows")]
-const EXE_SUFFIX: &str = ".exe";
-
-#[cfg(not(target_os = "windows"))]
-const EXE_SUFFIX: &str = "";
+use std::env::consts::EXE_SUFFIX;
 
 
 

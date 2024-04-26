@@ -45,7 +45,9 @@ fn do_notifications(test_name: &str,
 
         let message = response.data.unwrap();
         match message {
-            MessageResponse::Rows(rows) => assert!(rows.len() == 0),
+            MessageResponse::QueryResult(_) => {}
+            MessageResponse::QueryResultsAndRows(_) => panic!("unexpected database response"),
+            MessageResponse::Rows(_) => panic!("unexpected database response"),
             MessageResponse::Error(err) => panic!("{}", err),
         }
         let name = "Ha";
@@ -60,7 +62,12 @@ fn do_notifications(test_name: &str,
         ).await.unwrap();
         let message = response.data.unwrap();
         match message {
-            MessageResponse::Rows(rows) => assert!(rows.len() == 0),
+            MessageResponse::QueryResult(res) => {
+              assert_eq!(res.changes , 1);
+              assert_eq!(res.last_insert_rowid , 1);
+            }
+            MessageResponse::QueryResultsAndRows(_) => panic!("unexpected database response"),
+            MessageResponse::Rows(_) => panic!("unexpected database response"),
             MessageResponse::Error(err) => panic!("{}", err),
         }
 
@@ -97,7 +104,9 @@ fn do_notifications(test_name: &str,
         ).await.unwrap();
         let message = response.data.unwrap();
         match message {
-            MessageResponse::Rows(rows) => assert!(rows.len() == 0),
+            MessageResponse::QueryResult(res) => assert_eq!(res.changes , 1),
+            MessageResponse::QueryResultsAndRows(_) => panic!("unexpected database response"),
+            MessageResponse::Rows(_) => panic!("unexpected database response"),
             MessageResponse::Error(err) => panic!("{}", err),
         }
         let notification_stream = conn.inner.notification_stream_manager.notification_stream.as_mut().unwrap();
@@ -165,7 +174,9 @@ fn do_notifications2(test_name: &str,
 
           let message = response.data.unwrap();
           match message {
-              MessageResponse::Rows(rows) => assert!(rows.len() == 0),
+               MessageResponse::QueryResult(_) => {}
+               MessageResponse::QueryResultsAndRows(_) => panic!("unexpected database response"),
+               MessageResponse::Rows(_) => panic!("unexpected database response"),
               MessageResponse::Error(err) => panic!("{}", err),
           }
           let name = "Ha";
@@ -180,7 +191,9 @@ fn do_notifications2(test_name: &str,
           ).await.unwrap();
           let message = response.data.unwrap();
           match message {
-              MessageResponse::Rows(rows) => assert!(rows.len() == 0),
+                MessageResponse::QueryResult(res) => assert_eq!(res.changes , 1),
+                MessageResponse::QueryResultsAndRows(_) => panic!("unexpected database response"),
+                MessageResponse::Rows(_) => panic!("unexpected database response"),
               MessageResponse::Error(err) => panic!("{}", err),
           }
 
@@ -217,7 +230,9 @@ fn do_notifications2(test_name: &str,
           ).await.unwrap();
           let message = response.data.unwrap();
           match message {
-              MessageResponse::Rows(rows) => assert!(rows.len() == 0),
+              MessageResponse::QueryResult(res) => assert_eq!(res.changes , 1),
+                MessageResponse::QueryResultsAndRows(_) => panic!("unexpected database response"),
+                MessageResponse::Rows(_) => panic!("unexpected database response"),
               MessageResponse::Error(err) => panic!("{}", err),
           }
           let notification_stream = conn.inner.notification_stream_manager.notification_stream.as_mut().unwrap();

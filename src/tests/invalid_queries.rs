@@ -17,6 +17,32 @@ fn invalid_queries() {
             ))
             .await
             .unwrap();
+         let res = sqlx::query(
+            "CREATE TABLE IF NOT EXISTS _sqlx_rxqlite_test_user_and_date_ (
+        id abcdef PRIMARY KEY
+    )",
+        )
+        .execute(&pool)
+        .await;
+         
+        assert!(res.is_ok());
+         let res = sqlx::query(
+            "DROP TABLE _sqlx_rxqlite_test_user_and_date_",
+        )
+        .execute(&pool)
+        .await;
+        assert!(res.is_ok());
+        
+        let res = sqlx::query(
+            "CREATE MENSA IF NOT EXISTS _sqlx_rxqlite_test_user_and_date_ (
+        id abcdef PRIMARY KEY
+    )",
+        )
+        .execute(&pool)
+        .await;
+         
+        assert!(res.is_err());
+        
         let res = sqlx::query(
             "CREATE TABLE IF NOT EXISTS _sqlx_rxqlite_test_user_and_date_ (
         id INTEGER PRIMARY KEY,

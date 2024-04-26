@@ -14,6 +14,47 @@ use sqlx_core::executor::{Execute, Executor};
 use sqlx_core::ext::ustr::UStr;
 use sqlx_core::try_stream;
 use sqlx_core::Either;
+use rxqlite_common::Column;
+
+trait IntoRXQLitTypeInfo {
+  fn into_rxqlite_type_info(self)->RXQLiteTypeInfo;
+}
+
+impl IntoRXQLitTypeInfo for rxqlite_common::TypeInfo {
+  fn into_rxqlite_type_info(self)->RXQLiteTypeInfo {
+    match self {
+      Self::Null => RXQLiteTypeInfo(DataType::Null),
+      Self::Int => RXQLiteTypeInfo(DataType::Int),
+      Self::Float => RXQLiteTypeInfo(DataType::Float),
+      Self::Text => RXQLiteTypeInfo(DataType::Text),
+      Self::Blob => RXQLiteTypeInfo(DataType::Blob),
+      Self::Numeric => RXQLiteTypeInfo(DataType::Numeric),
+      Self::Bool => RXQLiteTypeInfo(DataType::Bool),
+      Self::Int64 => RXQLiteTypeInfo(DataType::Int64),
+      Self::Date => RXQLiteTypeInfo(DataType::Date),
+      Self::Time => RXQLiteTypeInfo(DataType::Time),
+      Self::DateTime => RXQLiteTypeInfo(DataType::Datetime),
+    }
+  }
+}
+
+impl IntoRXQLitTypeInfo for &rxqlite_common::TypeInfo {
+  fn into_rxqlite_type_info(self)->RXQLiteTypeInfo {
+    match self {
+      rxqlite_common::TypeInfo::Null => RXQLiteTypeInfo(DataType::Null),
+      rxqlite_common::TypeInfo::Int => RXQLiteTypeInfo(DataType::Int),
+      rxqlite_common::TypeInfo::Float => RXQLiteTypeInfo(DataType::Float),
+      rxqlite_common::TypeInfo::Text => RXQLiteTypeInfo(DataType::Text),
+      rxqlite_common::TypeInfo::Blob => RXQLiteTypeInfo(DataType::Blob),
+      rxqlite_common::TypeInfo::Numeric => RXQLiteTypeInfo(DataType::Numeric),
+      rxqlite_common::TypeInfo::Bool => RXQLiteTypeInfo(DataType::Bool),
+      rxqlite_common::TypeInfo::Int64 => RXQLiteTypeInfo(DataType::Int64),
+      rxqlite_common::TypeInfo::Date => RXQLiteTypeInfo(DataType::Date),
+      rxqlite_common::TypeInfo::Time => RXQLiteTypeInfo(DataType::Time),
+      rxqlite_common::TypeInfo::DateTime => RXQLiteTypeInfo(DataType::Datetime),
+    }
+  }
+}
 
 impl<'c> Executor<'c> for &'c mut RXQLiteConnection {
     type Database = RXQLite;
@@ -33,35 +74,61 @@ impl<'c> Executor<'c> for &'c mut RXQLiteConnection {
         //let args = Vec::with_capacity(arguments.len());
 
         Box::pin(try_stream! {
-          let rows = self.inner.fetch_all(sql, match arguments {
+          let result_or_rows = self.inner.fetch_many(sql, match arguments {
             Some(arguments)=>arguments.values,
             _=>vec![],
           }).await;
-          match rows {
-            Ok(rows)=> {
+          match result_or_rows {
+            Ok(result_or_rows)=> {
               //println!("{}:({})",file!(),line!());
 
               //pin_mut!(cursor);
-              let mut rows_iter=rows.into_iter();
-              while let Some(row) = rows_iter.next() {
-                let size = row.inner.len();
-                let mut values = Vec::with_capacity(size);
-                let mut columns = Vec::with_capacity(size);
-                //let mut column_names = Vec::with_capacity(size);
-                  for (i,value) in row.inner.into_iter().enumerate() {
-                    values.push(RXQLiteValue::new(value,RXQLiteTypeInfo(DataType::Null)));
-                    columns.push(RXQLiteColumn{
-                      name : UStr::from(""),
-                      ordinal: i,
-                      type_info: RXQLiteTypeInfo(DataType::Null),
-                    });
+              let mut result_or_rows_iter=result_or_rows.into_iter();
+              while let Some(result_or_row) = result_or_rows_iter.next() {
+                match result_or_row {
+                  Ok(result_or_row) => {
+                    match result_or_row {
+                      Either::Left(res)=> {
+                        let res=Either::Left(RXQLiteQueryResult {
+                          last_insert_rowid: res.last_insert_rowid,
+                          changes: res.changes,
+                        });
+                        r#yield!(res);
+                      }
+                      Either::Right(row)=> {
+                        let size = row.inner.len();
+                        let mut values = Vec::with_capacity(size);
+                        let mut columns = Vec::with_capacity(size);
+                        let mut column_names: sqlx_core::HashMap<UStr,usize> = Default::default();
+                        for (_i,col) in row.inner.into_iter().enumerate() {
+                          let ordinal = col.ordinal;
+                          let column_name= UStr::from(row.columns[ordinal as usize].name.to_string());
+                          
+                          let column: &Column = &row.columns[ordinal as usize];
+                          let rxqlite_type_info = (&column.type_info).into_rxqlite_type_info();
+                          values.push(RXQLiteValue::new(col.value,rxqlite_type_info.clone()));
+                          columns.push(RXQLiteColumn{
+                            name : column_name.clone(),
+                            ordinal: ordinal as _,
+                            type_info: rxqlite_type_info,
+                          });
+                          column_names.insert(column_name,ordinal as _);
+                        }
+                        let row=Either::Right(RXQLiteRow {
+                          values: values.into_boxed_slice(),
+                          columns: columns.into(),
+                          column_names: column_names.into(),
+                        });
+                        r#yield!(row);
+                      }
+                    }
                   }
-                  let row=Either::Right(RXQLiteRow {
-                    values: values.into_boxed_slice(),
-                    columns: columns.into(),
-                    column_names : Default::default(),
-                  });
-                  r#yield!(row);
+                  Err(err)=>{
+                    return Err(RXQLiteError{
+                      inner: anyhow::anyhow!(err),
+                    }.into());
+                  }
+                }
               }
               Ok(())
             }
@@ -109,19 +176,26 @@ impl<'c> Executor<'c> for &'c mut RXQLiteConnection {
                         let size = row.inner.len();
                         let mut values = Vec::with_capacity(size);
                         let mut columns = Vec::with_capacity(size);
-                        //let mut column_names = Vec::with_capacity(size);
-                        for (i, value) in row.inner.into_iter().enumerate() {
-                            values.push(RXQLiteValue::new(value, RXQLiteTypeInfo(DataType::Null)));
-                            columns.push(RXQLiteColumn {
-                                name: UStr::from(""),
-                                ordinal: i,
-                                type_info: RXQLiteTypeInfo(DataType::Null),
-                            });
+                        let mut column_names: sqlx_core::HashMap<UStr,usize> = Default::default();
+                        for (_i, col) in row.inner.into_iter().enumerate() {
+                          let ordinal = col.ordinal;
+                          let column_name= UStr::from(row.columns[ordinal as usize].name.to_string());
+                          let column: &Column = &row.columns[ordinal as usize];
+                          let rxqlite_type_info = (&column.type_info).into_rxqlite_type_info();
+                          values.push(RXQLiteValue::new(col.value,rxqlite_type_info.clone()));
+                          columns.push(RXQLiteColumn{
+                            name : column_name.clone(),
+                            ordinal: ordinal as _,
+                            type_info: rxqlite_type_info,
+                          });
+                          column_names.insert(column_name,ordinal as _);
+                          
+                          
                         }
                         let row = RXQLiteRow {
                             values: values.into_boxed_slice(),
                             columns: columns.into(),
-                            column_names: Default::default(),
+                            column_names: column_names.into(),
                         };
                         Ok(Some(row))
                     } else {
@@ -160,19 +234,24 @@ impl<'c> Executor<'c> for &'c mut RXQLiteConnection {
                     let size = row.inner.len();
                     let mut values = Vec::with_capacity(size);
                     let mut columns = Vec::with_capacity(size);
-                    //let mut column_names = Vec::with_capacity(size);
-                    for (i, value) in row.inner.into_iter().enumerate() {
-                        values.push(RXQLiteValue::new(value, RXQLiteTypeInfo(DataType::Null)));
-                        columns.push(RXQLiteColumn {
-                            name: UStr::from(""),
-                            ordinal: i,
-                            type_info: RXQLiteTypeInfo(DataType::Null),
-                        });
+                    let mut column_names: sqlx_core::HashMap<UStr,usize> = Default::default();
+                    for (_i, col) in row.inner.into_iter().enumerate() {
+                        let ordinal = col.ordinal;
+                        let column_name= UStr::from(row.columns[ordinal as usize].name.to_string());
+                          let column: &Column = &row.columns[ordinal as usize];
+                          let rxqlite_type_info = (&column.type_info).into_rxqlite_type_info();
+                          values.push(RXQLiteValue::new(col.value,rxqlite_type_info.clone()));
+                          columns.push(RXQLiteColumn{
+                            name : column_name.clone(),
+                            ordinal: ordinal as _,
+                            type_info: rxqlite_type_info,
+                          });
+                          column_names.insert(column_name,ordinal as _);
                     }
                     let row = RXQLiteRow {
                         values: values.into_boxed_slice(),
                         columns: columns.into(),
-                        column_names: Default::default(),
+                        column_names: column_names.into(),
                     };
                     Ok(row)
                 }

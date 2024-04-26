@@ -23,11 +23,11 @@ use crate::error::BoxDynError;
 //use crate::type_info::DataType;
 use crate::{/*Sqlite,*/ RXQLiteTypeInfo};
 
-enum RXQLiteValueData<'r> {
+pub(crate) enum RXQLiteValueData<'r> {
     Value(&'r RXQLiteValue),
 }
 
-pub struct RXQLiteValueRef<'r>(RXQLiteValueData<'r>);
+pub struct RXQLiteValueRef<'r>(pub(crate) RXQLiteValueData<'r>);
 
 impl<'r> RXQLiteValueRef<'r> {
     pub(crate) fn value(value: &'r RXQLiteValue) -> Self {
