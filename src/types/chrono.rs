@@ -8,6 +8,7 @@ use crate::{
     type_info::DataType,
     types::Type,
     RXQLite, /*RXQLiteArgumentValue,*/ RXQLiteTypeInfo, RXQLiteValueRef,
+    RXQLiteValueData,
 };
 use chrono::FixedOffset;
 use chrono::{
@@ -108,7 +109,19 @@ fn decode_datetime(value: RXQLiteValueRef<'_>) -> Result<DateTime<FixedOffset>, 
         DataType::Text => decode_datetime_from_text(&value.text()?),
         DataType::Int | DataType::Int64 => decode_datetime_from_int(value.int64()?),
         DataType::Float => decode_datetime_from_float(value.double()?),
-
+        DataType::Datetime => {
+          match value.0 {
+            RXQLiteValueData::Value(value)=>{
+              match &*value.handle {
+                rxqlite_common::Value::DateTime(utc) => {
+                  let fixed_offset_time = utc.with_timezone(&Utc.fix());
+                  Some(fixed_offset_time)
+                }
+                _=>None,
+              }
+            }
+          }
+        }
         _ => None,
     };
 
@@ -123,7 +136,9 @@ fn decode_datetime_from_text(value: &str) -> Option<DateTime<FixedOffset>> {
     if let Ok(dt) = DateTime::parse_from_rfc3339(value) {
         return Some(dt);
     }
-
+    if let Ok::<DateTime<FixedOffset>,_>(dt) = value.parse() {
+        return Some(dt);
+    }
     // Loop over common date time patterns, inspired by Diesel
     // https://github.com/diesel-rs/diesel/blob/93ab183bcb06c69c0aee4a7557b6798fd52dd0d8/diesel/src/sqlite/types/date_and_time/chrono.rs#L56-L97
     let sqlite_datetime_formats = &[
