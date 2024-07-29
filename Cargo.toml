@@ -63,7 +63,7 @@ version = "0.1"
 #path = "../rxqlite/crates/rxqlite-lite-common"
 
 [dependencies.sqlx-core]
-version = "0.7.4"
+version = "0.8.0"
 
 [[example]]
 name = "simple"
