@@ -74,7 +74,7 @@ required-features = [ "chrono" ]
 
 [dev-dependencies]
 anyhow = "1"
-sqlx = {  version = "0.7.4" , default-features = false, features = ["macros", "runtime-tokio", "tls-none" , "chrono" ] }
+sqlx = {  version = "0.8.2" , default-features = false, features = ["macros", "runtime-tokio", "tls-none" , "chrono" ] }
 tokio = { version = "1", features = [ "full" ] }
 futures = "0.3.30"
 rand = "0.8.5"
